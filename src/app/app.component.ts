@@ -15,8 +15,7 @@ export class AppComponent implements OnInit {
     private authService: AuthService
   ) {}
 
-  ngOnInit() {
-    this.fireService.initialize()
-    this.authService.authenticate();
+  async ngOnInit() {
+    await this.fireService.initialize();
   }
 }
