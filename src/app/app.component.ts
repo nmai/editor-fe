@@ -12,10 +12,9 @@ export class AppComponent implements OnInit {
 
   constructor(
     private fireService: FireService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   async ngOnInit() {
-    await this.fireService.initialize();
   }
 }
