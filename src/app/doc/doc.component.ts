@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import * as Editor from 'medium-editor';
-import { MediumEditor } from 'medium-editor';
+import MediumEditor from 'medium-editor';
 import { BehaviorSubject, fromEvent } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
 import { DocService } from '../services/doc.service';
+import { Latex } from '../lib/latex.extension';
 
 @Component({
   selector: 'app-doc',
@@ -22,7 +22,12 @@ export class DocComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.editor = new Editor('.editable');
+    this.editor = new MediumEditor('.editable', {
+      'latex': Latex,
+    });
+    this.editor.extensions.latex = Latex;
+
+    console.log(this.editor.extensions)
 
     let doc = await this.docService.fetchMyDoc()
     
