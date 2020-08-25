@@ -3,7 +3,7 @@ import MediumEditor from 'medium-editor';
 import { BehaviorSubject, fromEvent } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
 import { DocService } from '../services/doc.service';
-import { Latex } from '../lib/latex.extension';
+import { LatexExtension } from '../lib/latex.extension';
 
 @Component({
   selector: 'app-doc',
@@ -15,7 +15,7 @@ export class DocComponent implements OnInit {
   private editor: MediumEditor;
 
   private snapshot: string;
-  private eventStream = new BehaviorSubject<'edit'>(null);
+  private saveSubject = new BehaviorSubject<'edit'>(null);
 
   constructor(
     private docService: DocService,
@@ -23,11 +23,10 @@ export class DocComponent implements OnInit {
 
   async ngOnInit() {
     this.editor = new MediumEditor('.editable', {
-      'latex': Latex,
+      extensions: {
+        'latex': new LatexExtension(),
+      }
     });
-    this.editor.extensions.latex = Latex;
-
-    console.log(this.editor.extensions)
 
     let doc = await this.docService.fetchMyDoc()
     
@@ -37,12 +36,17 @@ export class DocComponent implements OnInit {
     }
 
     this.editor.setContent(doc.body);
+    
     this.editor.subscribe('editableInput', (data, editable) => {
       this.snapshot = this.editor.getContent();
-      this.eventStream.next('edit');
+      this.saveSubject.next('edit');
+    })
+    this.editor.subscribe('autoinsert', (data, editable) => {
+      this.snapshot = this.editor.getContent();
+      this.saveSubject.next('edit');
     })
 
-    this.eventStream.pipe(
+    this.saveSubject.pipe(
       filter( event => event != null ),
       debounceTime(1000),
     ).subscribe( this.saveSnapshot.bind(this) );
