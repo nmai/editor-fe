@@ -8,10 +8,8 @@ export const LatexExtension = MediumEditor.Extension.extend({
   name: 'latex',
 
   init: function () {
-    console.log(this)
     MediumEditor.Extension.prototype.init.apply(this, arguments);
     this.subscribe('editableKeypress', this.onKeypress.bind(this));
-    console.log(this.base)
   },
 
   onKeypress: function (keyPressEvent) {
@@ -22,11 +20,9 @@ export const LatexExtension = MediumEditor.Extension.extend({
         let matches = this.findLatexInput(keyPressEvent.target);
 
         for (let m of matches) {
-          console.log(m)
           // Cleanup
           let matchingTextNodes = MediumEditor.util.findOrCreateMatchingTextNodes(this.document, this.base.elements[0], m);
           for (let n of matchingTextNodes) {
-            console.log(n.parentNode)
             try {
               n.parentNode.removeChild(n)
             } catch(e) {
@@ -48,7 +44,7 @@ export const LatexExtension = MediumEditor.Extension.extend({
             // MediumEditor.util.insertHTMLCommand(this.document, '<span></span>');
             // MediumEditor.selection.moveCursor(this.document, this.base.elements[0].lastChild, 0);
           } catch(e) {
-            console.error(e);
+            console.debug(e);
           }
         }
       }.bind(this), 0);

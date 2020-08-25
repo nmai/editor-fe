@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, first } from 'rxjs/operators';
+import { filter, first, last, takeLast } from 'rxjs/operators';
 import { AuthState } from '../types';
 import { FireService } from './fire.service';
 
@@ -30,8 +30,9 @@ export class AuthService {
   /** basically converts the auth stream to a promise- just returns the last value, or waits for it if none. */
   public async waitAuthDecision(): Promise<AuthState> {
     return new Promise<AuthState>( resolve => {
-      let sub = this.authDecisionStream.subscribe( state => {
-        sub.unsubscribe();
+      this.authDecisionStream.pipe(
+        first()
+       ).subscribe( state => {
         resolve(state);
       });
     });
