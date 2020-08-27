@@ -29,7 +29,7 @@ export const LatexExtension = MediumEditor.Extension.extend({
               console.debug(e);
             }
           }
-          // Insert - example: c = \\pm\\sqrt{a^2 + b^2}
+          // Insert - example: c = \pm\sqrt{a^2 + b^2}
           let html = katex.renderToString(m.text.slice(1, m.text.length - 1), {
             throwOnError: false
           });
